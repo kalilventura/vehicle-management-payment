@@ -1,8 +1,7 @@
 package main
 
 import (
-  "github.com/gin-gonic/gin"
-  logger "github.com/sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 )
 
 // @title Vehicle Management Payment Service
@@ -17,15 +16,21 @@ import (
 // @license.name MIT License
 // @license.url https://opensource.org/license/mit
 func main() {
-  defer handlePanic()
+	logger.Info("⚙️ Initializing application...")
+	defer handlePanic()
 
-  engine := gin.Default()
-  panic(engine.Run(":8080"))
+	modules := InjectModules()
+	settings := InjectSettings()
+
+	application := SetupServer(modules)
+
+	port := settings.GetPort()
+	application.Logger.Fatal(application.Start(port))
 }
 
 func handlePanic() {
-  if r := recover(); r != nil {
-    logger.WithField("panic", r).
-      Fatal("🚨 A critical and unrecoverable error occurred, forcing the application to stop.")
-  }
+	if r := recover(); r != nil {
+		logger.WithField("panic", r).
+			Fatal("🚨 A critical and unrecoverable error occurred, forcing the application to stop.")
+	}
 }

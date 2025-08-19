@@ -5,7 +5,7 @@ docker-up:
 .PHONY: goose-up
 goose-up:
 	go install github.com/pressly/goose/v3/cmd/goose@latest
-	goose -dir db/migrations postgres "host=localhost port=5432 user=postgres password=postgres dbname=vehicle_management sslmode=disable" up
+	goose -dir db/migrations postgres "host=localhost port=5433 user=postgres password=postgres dbname=vehicle_payment sslmode=disable" up
 
 .PHONY: migrate
 migrate:
