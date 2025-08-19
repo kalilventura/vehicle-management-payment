@@ -17,6 +17,7 @@ Exceptions are acceptable depending on the circumstances (critical bug fixes tha
 
 ### Added
 
+- added dockerfile support
 - added a new resource called `POST /v1/payments` to process the vehicle payment
 - added project structure
 
