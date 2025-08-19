@@ -19,3 +19,7 @@ Exceptions are acceptable depending on the circumstances (critical bug fixes tha
 
 - added a new resource called `POST /v1/payments` to process the vehicle payment
 - added project structure
+
+### Changed
+
+- changed the pipeline by improving the Docker image push

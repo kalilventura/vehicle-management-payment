@@ -94,5 +94,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/vehicle-management-payment:latest
-            ${{ secrets.DOCKER_USERNAME }}/vehicle-management-payment:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY_NAME }}:latest
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY_NAME }}:${{ github.sha }}
