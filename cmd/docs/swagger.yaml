@@ -1,0 +1,80 @@
+definitions:
+  ErrorResponse:
+    properties:
+      details: {}
+      error:
+        type: string
+      status:
+        type: integer
+    type: object
+  ProcessPaymentRequest:
+    description: Object that represents a vehicle payment
+    properties:
+      amount:
+        type: number
+      cpf:
+        type: string
+      created_at:
+        type: string
+      vehicle_id:
+        type: string
+    required:
+    - amount
+    - cpf
+    - created_at
+    - vehicle_id
+    type: object
+  SuccessResponse:
+    description: Object that represents a success response
+    properties:
+      data: {}
+      message:
+        type: string
+      meta: {}
+      status:
+        type: integer
+    type: object
+info:
+  contact:
+    email: kalilventur@gmail.com
+    name: API Support
+    url: https://github.com/kalilventura/vehicle-management-payment
+  description: Vehicle Management Service.
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit
+  termsOfService: http://swagger.io/terms/
+  title: Vehicle Management Payment Service
+  version: "1.0"
+paths:
+  /v1/payments:
+    post:
+      consumes:
+      - application/json
+      description: Save a new payment
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ProcessPaymentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Save a new payment
+      tags:
+      - payments
+swagger: "2.0"
