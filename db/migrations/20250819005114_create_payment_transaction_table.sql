@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS payment_transaction (
   id                     UUID DEFAULT uuidv7() PRIMARY KEY,
   payment_id             UUID NOT NULL REFERENCES vehicle_payment(id),
   gateway_transaction_id VARCHAR(255) NOT NULL,
-  status                 VARCHAR(20) NOT NULL CHECK (status IN ('processing', 'success', 'failure')),
+  status                 TEXT NOT NULL,
   response_code          VARCHAR(50),
   response_message       TEXT,
   raw_response           JSONB,

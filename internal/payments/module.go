@@ -9,9 +9,13 @@ type Module struct {
 	paymentControllers []entities.Controller
 }
 
-func NewModule(processPaymentController *controllers.ProcessPaymentController) *Module {
+func NewModule(
+	processPaymentController *controllers.ProcessPaymentController,
+	webhookController *controllers.WebhookPaymentController,
+) *Module {
 	paymentControllers := []entities.Controller{
 		processPaymentController,
+		webhookController,
 	}
 	return &Module{paymentControllers}
 }
