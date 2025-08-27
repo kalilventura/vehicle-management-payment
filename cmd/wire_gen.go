@@ -11,6 +11,7 @@ import (
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/domain/commands"
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/controllers"
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/repositories"
+	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/services"
 	"github.com/kalilventura/vehicle-management-payment/internal/shared/domain/entities"
 	"github.com/kalilventura/vehicle-management-payment/internal/shared/infrastructure/configuration"
 	"os"
@@ -27,9 +28,15 @@ func InjectModules() []entities.HTTPModule {
 	databaseSettings := injectDatabaseSettings()
 	db := configuration.NewDatabaseClient(databaseSettings)
 	gormPaymentsRepository := repositories.NewGormPaymentsRepository(db)
-	savePaymentCommand := commands.NewSavePaymentCommand(gormPaymentsRepository)
+	paymentSettings := injectPaymentSettings()
+	stripePaymentService := services.NewStripePaymentService(paymentSettings)
+	savePaymentCommand := commands.NewSavePaymentCommand(gormPaymentsRepository, stripePaymentService)
 	processPaymentController := controllers.NewProcessPaymentController(savePaymentCommand)
-	module := payments.NewModule(processPaymentController)
+	updatePaymentCommand := commands.NewUpdatePaymentCommand(gormPaymentsRepository)
+	webhookSettings := injectWebhookSettings()
+	stripeWebhookProcessor := services.NewStripeWebhookProcessor(webhookSettings)
+	webhookPaymentController := controllers.NewWebhookPaymentController(updatePaymentCommand, stripeWebhookProcessor)
+	module := payments.NewModule(processPaymentController, webhookPaymentController)
 	v := newModules(module)
 	return v
 }
@@ -38,7 +45,7 @@ func InjectModules() []entities.HTTPModule {
 
 func InjectSettings() *entities.Settings {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	return entities.NewSettings(port)
+	return &entities.Settings{port}
 }
 
 func injectDatabaseSettings() *entities.DatabaseSettings {
@@ -56,6 +63,16 @@ func injectDatabaseSettings() *entities.DatabaseSettings {
 		password,
 		dbSSL,
 	)
+}
+
+func injectPaymentSettings() *entities.PaymentSettings {
+	stripeKey := os.Getenv("STRIPE_KEY")
+	return &entities.PaymentSettings{stripeKey}
+}
+
+func injectWebhookSettings() *entities.WebhookSettings {
+	stripeKey := os.Getenv("STRIPE_WEBHOOK_KEY")
+	return &entities.WebhookSettings{stripeKey}
 }
 
 func newModules(paymentsModule *payments.Module) []entities.HTTPModule {

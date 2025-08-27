@@ -55,11 +55,10 @@ func (ctrl *ProcessPaymentController) Execute(ectx echo.Context) error {
 			handle = ctrl.onSuccess(ectx, payment)
 		},
 		OnError: func(err error) {
-			handle = ctrl.onInvalid(ectx, err)
+			handle = ctrl.onError(ectx, err)
 		},
 	}
 	ctrl.command.Execute(entity, listeners)
-
 	return handle
 }
 

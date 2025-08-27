@@ -8,4 +8,6 @@ import (
 var Container = wire.NewSet(
 	NewSavePaymentCommand,
 	wire.Bind(new(SavePayment), new(*SavePaymentCommand)),
+	NewUpdatePaymentCommand,
+	wire.Bind(new(UpdatePayment), new(*UpdatePaymentCommand)),
 )

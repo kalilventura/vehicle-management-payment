@@ -4,4 +4,5 @@ import "github.com/kalilventura/vehicle-management-payment/internal/payments/dom
 
 type PaymentsRepository interface {
 	Save(payment *entities.Payment) error
+	Update(payment *entities.UpdatePayment) error
 }

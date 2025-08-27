@@ -14,6 +14,8 @@ import (
 
 func InjectModules() []entities.HTTPModule {
 	wire.Build(
+		injectWebhookSettings,
+		injectPaymentSettings,
 		injectDatabaseSettings,
 		configuration.NewDatabaseClient,
 		payments.Container,
@@ -24,7 +26,7 @@ func InjectModules() []entities.HTTPModule {
 
 func InjectSettings() *entities.Settings {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	return entities.NewSettings(port)
+	return &entities.Settings{port}
 }
 
 func injectDatabaseSettings() *entities.DatabaseSettings {
@@ -42,6 +44,16 @@ func injectDatabaseSettings() *entities.DatabaseSettings {
 		password,
 		dbSSL,
 	)
+}
+
+func injectPaymentSettings() *entities.PaymentSettings {
+	stripeKey := os.Getenv("STRIPE_KEY")
+	return &entities.PaymentSettings{stripeKey}
+}
+
+func injectWebhookSettings() *entities.WebhookSettings {
+	stripeKey := os.Getenv("STRIPE_WEBHOOK_KEY")
+	return &entities.WebhookSettings{stripeKey}
 }
 
 func newModules(paymentsModule *payments.Module) []entities.HTTPModule {
