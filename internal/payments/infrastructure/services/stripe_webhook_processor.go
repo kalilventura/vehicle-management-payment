@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/domain/entities"
-	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/controllers/mappers"
+	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/services/mappers"
 	global "github.com/kalilventura/vehicle-management-payment/internal/shared/domain/entities"
 	logger "github.com/sirupsen/logrus"
 	"github.com/stripe/stripe-go/v82/webhook"
@@ -22,7 +22,6 @@ func NewStripeWebhookProcessor(settings *global.WebhookSettings) *StripeWebhookP
 	}
 }
 
-// Process implements the WebhookProcessor interface for Stripe.
 func (p *StripeWebhookProcessor) Process(payload []byte, signature string) (*entities.UpdatePayment, error) {
 	event, err := webhook.ConstructEvent(payload, signature, p.settings.Secret)
 	if err != nil {

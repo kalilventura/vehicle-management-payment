@@ -5,10 +5,46 @@ import (
 
 	_ "github.com/kalilventura/vehicle-management-payment/cmd/docs" // generated docs
 	"github.com/kalilventura/vehicle-management-payment/internal/shared/domain/entities"
+	"github.com/kalilventura/vehicle-management-payment/internal/shared/domain/services"
 	"github.com/labstack/echo/v4"
 	logger "github.com/sirupsen/logrus"
 	echoSwagger "github.com/swaggo/echo-swagger" // echo-swagger middleware
 )
+
+type App struct {
+	migrationService services.MigrationService
+	settings         *entities.Settings
+	modules          []entities.HTTPModule
+}
+
+func NewApp(
+	migrationService services.MigrationService,
+	settings *entities.Settings,
+	modules []entities.HTTPModule,
+) *App {
+	return &App{
+		migrationService,
+		settings,
+		modules,
+	}
+}
+
+func (a *App) SetupServer() *echo.Echo {
+	application := echo.New()
+	handleRoutes(application, a.modules)
+	handleSwagger(application)
+	return application
+}
+
+func (a *App) RunMigrations() {
+	logger.Infof("Creating the database structure...")
+	err := a.migrationService.Run("db/migrations")
+	if err != nil {
+		logger.Fatalf("failed to run migrations: %v", err)
+		panic(err)
+	}
+	logger.Infof("Database structure created successfully")
+}
 
 func handleRoutes(application *echo.Echo, modules []entities.HTTPModule) {
 	logger.Info("🚀 Initializing HTTP router and registering routes...")
@@ -33,11 +69,4 @@ func handleRoutes(application *echo.Echo, modules []entities.HTTPModule) {
 func handleSwagger(application *echo.Echo) {
 	logger.Info("registering swagger")
 	application.GET("/swagger/*", echoSwagger.WrapHandler)
-}
-
-func SetupServer(modules []entities.HTTPModule) *echo.Echo {
-	application := echo.New()
-	handleRoutes(application, modules)
-	handleSwagger(application)
-	return application
 }
