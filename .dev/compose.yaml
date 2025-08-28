@@ -1,7 +1,7 @@
 services:
   vehicle_payment_database:
     container_name: vehicle_payment_database
-    image: postgres:18beta2-alpine3.22
+    image: postgres:17.6-alpine3.22
     restart: on-failure
     environment:
       - 'POSTGRES_DB=vehicle_payment'
