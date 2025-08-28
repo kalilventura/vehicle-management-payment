@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS payment_transaction (
-  id                     UUID DEFAULT uuidv7() PRIMARY KEY,
+  id                     UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   payment_id             UUID NOT NULL REFERENCES vehicle_payment(id),
   gateway_transaction_id VARCHAR(255) NOT NULL,
   status                 TEXT NOT NULL,

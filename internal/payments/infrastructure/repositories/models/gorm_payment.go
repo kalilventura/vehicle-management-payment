@@ -7,7 +7,7 @@ import (
 )
 
 type GormPayment struct {
-	ID           string                   `gorm:"primaryKey;type:uuid;default:uuidv7()"`
+	ID           string                   `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	VehicleID    string                   `gorm:"not null"`
 	Cpf          string                   `gorm:"type:text;not null"`
 	Amount       float64                  `gorm:"not null;check:amount > 0"`

@@ -7,7 +7,7 @@ import (
 )
 
 type GormPaymentTransaction struct {
-	ID                   string      `gorm:"type:uuid;default:uuidv7();primaryKey"`
+	ID                   string      `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	PaymentID            string      `gorm:"type:uuid;not null;index;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Payment              GormPayment `gorm:"foreignKey:PaymentID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	GatewayTransactionID string      `gorm:"type:varchar(255);not null"`
