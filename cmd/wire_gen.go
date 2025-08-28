@@ -11,9 +11,10 @@ import (
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/domain/commands"
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/controllers"
 	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/repositories"
-	"github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/services"
+	services2 "github.com/kalilventura/vehicle-management-payment/internal/payments/infrastructure/services"
 	"github.com/kalilventura/vehicle-management-payment/internal/shared/domain/entities"
 	"github.com/kalilventura/vehicle-management-payment/internal/shared/infrastructure/configuration"
+	"github.com/kalilventura/vehicle-management-payment/internal/shared/infrastructure/services"
 	"os"
 	"strconv"
 )
@@ -24,28 +25,31 @@ import (
 
 // Injectors from wire.go:
 
-func InjectModules() []entities.HTTPModule {
+func InjectApp() *App {
 	databaseSettings := injectDatabaseSettings()
 	db := configuration.NewDatabaseClient(databaseSettings)
+	gooseMigrationService := services.NewGooseMigrationService(db, databaseSettings)
+	settings := InjectSettings()
 	gormPaymentsRepository := repositories.NewGormPaymentsRepository(db)
 	paymentSettings := injectPaymentSettings()
-	stripePaymentService := services.NewStripePaymentService(paymentSettings)
+	stripePaymentService := services2.NewStripePaymentService(paymentSettings)
 	savePaymentCommand := commands.NewSavePaymentCommand(gormPaymentsRepository, stripePaymentService)
 	processPaymentController := controllers.NewProcessPaymentController(savePaymentCommand)
 	updatePaymentCommand := commands.NewUpdatePaymentCommand(gormPaymentsRepository)
 	webhookSettings := injectWebhookSettings()
-	stripeWebhookProcessor := services.NewStripeWebhookProcessor(webhookSettings)
+	stripeWebhookProcessor := services2.NewStripeWebhookProcessor(webhookSettings)
 	webhookPaymentController := controllers.NewWebhookPaymentController(updatePaymentCommand, stripeWebhookProcessor)
 	module := payments.NewModule(processPaymentController, webhookPaymentController)
 	v := newModules(module)
-	return v
+	app := NewApp(gooseMigrationService, settings, v)
+	return app
 }
 
 // wire.go:
 
 func InjectSettings() *entities.Settings {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	return &entities.Settings{port}
+	return &entities.Settings{Port: port}
 }
 
 func injectDatabaseSettings() *entities.DatabaseSettings {
@@ -67,12 +71,12 @@ func injectDatabaseSettings() *entities.DatabaseSettings {
 
 func injectPaymentSettings() *entities.PaymentSettings {
 	stripeKey := os.Getenv("STRIPE_KEY")
-	return &entities.PaymentSettings{stripeKey}
+	return &entities.PaymentSettings{StripeKey: stripeKey}
 }
 
 func injectWebhookSettings() *entities.WebhookSettings {
 	stripeKey := os.Getenv("STRIPE_WEBHOOK_KEY")
-	return &entities.WebhookSettings{stripeKey}
+	return &entities.WebhookSettings{Secret: stripeKey}
 }
 
 func newModules(paymentsModule *payments.Module) []entities.HTTPModule {

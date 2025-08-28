@@ -17,6 +17,7 @@ Exceptions are acceptable depending on the circumstances (critical bug fixes tha
 
 ### Added
 
+- added a new service to migrate the database
 - added a new service to process the vehicle payment
 - added a new resource called `POST /v1/payments/webhook` to receive the payment events from the payment gateway
 - added dockerfile support
