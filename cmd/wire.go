@@ -29,7 +29,7 @@ func InjectApp() *App {
 }
 
 func InjectSettings() *entities.Settings {
-  port, _ := strconv.Atoi(os.Getenv("PORT"))
+  port, _ := strconv.Atoi(os.Getenv("APP_PORT"))
   return &entities.Settings{Port: port}
 }
 
