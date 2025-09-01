@@ -3,7 +3,7 @@ module github.com/kalilventura/vehicle-management-payment
 go 1.24.5
 
 require (
-	github.com/brianvoe/gofakeit/v7 v7.4.0
+	github.com/brianvoe/gofakeit/v7 v7.5.1
 	github.com/google/wire v0.7.0
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/lib/pq v1.10.9
