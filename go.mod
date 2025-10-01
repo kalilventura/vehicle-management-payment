@@ -10,7 +10,7 @@ require (
 	github.com/pressly/goose/v3 v3.25.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
-	github.com/stripe/stripe-go/v82 v82.5.0
+	github.com/stripe/stripe-go/v82 v82.5.1
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.6
 	github.com/testcontainers/testcontainers-go v0.38.0
